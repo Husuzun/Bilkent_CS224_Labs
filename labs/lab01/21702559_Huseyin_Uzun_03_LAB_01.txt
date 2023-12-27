@@ -1,0 +1,452 @@
+##
+## Program1.asm - prints out "hello world"
+##
+##	a0 - points to the string
+##
+
+#################################
+#					 	#
+#		text segment		#
+#						#
+#################################
+
+	.text		
+
+# execution starts here
+	la $a0,str	# put string address into a0
+	li $v0,4	# system call to print
+	syscall		#   out a string
+
+	li $v0,10  # system call to exit
+	syscall	#    bye bye
+
+
+#################################
+#					 	#
+#     	 data segment		#
+#						#
+#################################
+
+	.data
+str:	.asciiz "0123hesdafgdsh\n"
+n:	.word	10
+
+##
+## end of file Program1.asm
+##
+## Program2.asm asks user for temperature in Celsius,
+##  converts to Fahrenheit, prints the result.
+##
+##	v0 - reads in Celsius
+##	t0 - holds Fahrenheit result
+##	a0 - points to output strings
+##
+
+#################################
+#					 	#
+#		text segment		#
+#						#
+#################################
+
+	.text			
+
+	la $a0,prompt	# output prompt message on terminal
+	li $v0,4	# syscall 4 prints the string
+	syscall
+
+	li $v0, 5	# syscall 5 reads an integer
+	syscall
+
+	mul $t0,$v0,9	# to convert,multiply by 9,
+	div $t0,$t0,5	# divide by 5, then
+	add $t0,$t0,32	# add 32
+
+	la $a0,ans1	# print string before result
+	li $v0,4
+	syscall
+
+	move $a0,$t0	# print integer result
+	li $v0,1		# using syscall 1
+	syscall
+
+	la $a0,endl	# system call to print
+	li $v0,4		# out a newline
+	syscall
+
+	li $v0,10		# system call to exit
+	syscall		#    bye bye
+
+
+#################################
+#					 	#
+#     	 data segment		#
+#						#
+#################################
+
+	.data
+prompt:	.asciiz "Enter temperature (Celsius): "
+ans1:	.asciiz "The temperature in Fahrenheit is "
+endl:	.asciiz "\n"
+
+##
+## end of file Program2.asm
+
+##
+##	Program3.asm is a loop implementation
+##	of the Fibonacci function
+##        
+
+#################################
+#					 	#
+#		text segment		#
+#						#
+#################################
+
+	.text	
+ 
+# execution starts here
+	li $a0,7	# to calculate fib(7)
+	jal fib		# call fib
+	move $a0,$v0	# print result
+	li $v0, 1
+	syscall
+
+	la $a0,endl	# print newline
+	li $v0,4
+	syscall
+
+	li $v0,10
+	syscall	# bye bye
+
+#------------------------------------------------
+
+
+fib:	move $v0,$a0	# initialise last element
+	blt $a0,2,done	# fib(0)=0, fib(1)=1
+
+	li $t0,0	# second last element
+	li $v0,1	# last element
+
+loop:	add $t1,$t0,$v0	# get next value
+	move $t0,$v0	# update second last
+	move $v0,$t1	# update last element
+	sub $a0,$a0,1	# decrement count
+	bgt $a0,1,loop	# exit loop when count=0
+done:	jr $ra
+
+#################################
+#					 	#
+#     	 data segment		#
+#						#
+#################################
+
+	.data
+endl:	.asciiz "\n"
+
+##
+## end of Program3.asm
+# CS224
+# Lab 01
+# Section 03
+# Huseyin Uzun
+# 21702559
+# 04.10.2023
+
+#################################
+#					 	#
+#		text segment		#
+#						#
+#################################
+
+	.text		
+.globl __start
+ 
+__start:		# execution starts here
+
+	la 	$a0,	bPrompt	# output prompt message on terminal
+	li 	$v0,	4	# syscall 4 prints the string
+	syscall
+	
+	li	$v0, 5
+	syscall
+	
+	move	$s1, $v0
+	la 	$a0,	cPrompt	# output prompt message on terminal
+	li 	$v0,	4	# syscall 4 prints the string
+	syscall
+	
+	li	$v0, 5
+	syscall
+
+	move 	$s2, $v0
+	la 	$a0,	dPrompt	# output prompt message on terminal
+	li 	$v0,	4	# syscall 4 prints the string
+	syscall
+	
+	li	$v0, 5
+	syscall
+
+	move 	$s3, $v0
+	jal equation		# call fib
+	
+	la $a0,result	# print newline
+	li $v0,4
+	syscall
+	move 	$a0, $s4	# print result
+	li $v0, 1
+	syscall
+
+	la $a0,endl	# print newline
+	li $v0,4
+	syscall
+
+	li $v0,10
+	syscall		# bye bye
+
+#------------------------------------------------
+
+equation:
+	li 	$s4, 0
+	mul 	$s4, $s1, $s3
+	srl 	$s4, $s4, 1
+	addi	$s4, $s4, 5
+	sub	$s4, $s4, $s1
+	div	$s4, $s2
+	mfhi	$s4
+	jr 	$ra
+
+#################################
+#					 	#
+#     	 data segment		#
+#						#
+#################################
+
+.data
+	bPrompt:	.asciiz "\n B: "
+	cPrompt:	.asciiz "\n C: "
+	dPrompt:	.asciiz "\n D: "
+	result:		.asciiz "\n Result: "
+	endl:		.asciiz "\n"
+
+##
+## end of Program3.asm
+	.text
+
+	la 	$a0,	arrayNumber	# output prompt message on terminal
+	li 	$v0,	4	# syscall 4 prints the string
+	syscall
+	
+	li	$v0, 5
+	syscall
+	
+	move	$a0, $v0
+	move	$a1, $a0
+	li	$v0, 9
+	syscall
+	li	$s7, 4
+	li	$s6, 3
+	li	$s5, 2
+	li	$s4, 1
+	li	$s3, 0
+	# Array beginning address is in $v0
+	
+# Populate array in subprogram populateArray
+	move	$a0, $v0	# $vo contains the beginning address of array
+	li $v0, 4
+	
+	jal	populateArray
+# Print array in subprogram printArray
+	jal	printArray
+		
+menu:
+	move	$t0, $a0	# $t0: array pointer
+	move	$t1, $a1	# $t1: array size
+	
+	li $v0,4
+	la $a0,menuPrompt
+	syscall
+	
+	li	$v0, 5
+	syscall
+	move	$a0, $t0	# $t0: array pointer
+	move	$a1, $t1	# $t1: array size
+	
+	beq $v0, $s3, findMax
+	beq $v0, $s4, findMaxNumber
+	beq $v0, $s5, findDiv
+	beq $v0, $s6, exitProgram
+	beq $v0, $s7, printArray
+
+			
+	jal menu
+# stop
+exitProgram:
+
+	li $v0,4
+	la $a0,exit
+	syscall
+	
+	li	$v0, 10
+	syscall
+#===============================================================
+populateArray:
+	move	$t0, $a0	# $t0: array pointer
+	move	$t1, $a1	# $t1: array size
+	
+
+	li	$t3, 1
+	j	test
+again:	
+	move $a3, $a0
+	la $a0, arrayEnter	# output prompt message on terminal
+	li $v0,4	# syscall 4 prints the string
+	syscall
+	move $a0, $a3
+	li	$v0, 5
+	syscall
+	sw	$v0, 0($t0)
+	addi	$t3, $t3, 1
+	addi	$t0, $t0, 4
+	
+test:	
+	ble	$t3, $t1, again
+	jr	$ra		# Go back
+#===============================================================
+printArray:
+	move	$t0, $a0	# $t0: array pointer
+	move	$t2, $a0	# $t0: array pointer
+	move	$t1, $a1	# $t1: array size
+	li	$t3, 1
+	j	test2
+again2:	
+# Print array element pointed by $t0.
+	lw	$a0, 0($t0)
+	li	$v0, 1
+	syscall
+	move	$a0, $t2
+	addi	$t3, $t3, 1
+	addi	$t0, $t0, 4
+	
+test2:	
+	ble	$t3, $t1, again2
+	jr	$ra		# Go back
+	
+#===============================================================
+findMax:
+
+	add	$t6, $zero, $zero
+	move	$t0, $a0	# $t0: array pointer
+	move	$t2, $a0	# $t0: array pointer
+	move	$t1, $a1	# $t1: array size
+	li	$t3, 1
+	j	test3
+again3:	
+# Print array element pointed by $t0.
+	lw	$a0, 0($t0)
+
+	bgt	$a0, $t6, equal
+
+continue3:
+	move	$a0, $t2
+	addi	$t3, $t3, 1
+	addi	$t0, $t0, 4
+	
+test3:	
+	ble	$t3, $t1, again3
+	move	$t2, $a0
+	move	$a0, $t6
+	move	$s1, $a0  #bulduğun maxı t5e eşitle
+	li	$v0, 1
+	syscall
+	move	$a0, $t2
+	
+	jr	$ra		# Go back
+
+equal:
+	add	$t6, $a0, $zero
+	j continue3
+
+#===============================================================
+
+#===============================================================
+findMaxNumber:
+
+	add	$t6, $zero, $zero
+	move	$t0, $a0	# $t0: array pointer
+	move	$t2, $a0	# $t0: array pointer
+	move	$t1, $a1	# $t1: array size
+	li	$t3, 1
+	j	test4
+again4:	
+# Print array element pointed by $t0.
+	lw	$a0, 0($t0)
+
+	beq	$a0, $s1, equal2
+
+continue4:
+	move	$a0, $t2
+	addi	$t3, $t3, 1
+	addi	$t0, $t0, 4
+	
+test4:	
+	ble	$t3, $t1, again4
+	move	$t2, $a0
+	move	$a0, $t6
+	li	$v0, 1
+	syscall
+	move	$a0, $t2
+	jr	$ra		# Go back
+
+equal2:
+	addi	$t6, $t6, 1
+	j continue4
+
+#===============================================================
+findDiv:
+
+	add	$t6, $zero, $zero
+	move	$t0, $a0	# $t0: array pointer
+	move	$t2, $a0	# $t0: array pointer
+	move	$t1, $a1	# $t1: array size
+	li	$t7, 1
+	j	test5
+again5:	
+# Print array element pointed by $t0.
+	lw	$a0, 0($t0)
+
+	div $s1, $a0
+	mflo $t3
+	mfhi $t4
+	beq	$t3, $s4 , continue7
+	beq	$t4, $zero, divide
+continue7:
+continue6:
+	move	$a0, $t2
+	addi	$t7, $t7, 1
+	addi	$t0, $t0, 4
+	
+test5:	
+	ble	$t7, $t1, again5
+	move	$t2, $a0
+	move	$a0, $t6
+	li	$v0, 1
+	syscall
+	move	$a0, $t2
+	jr	$ra		# Go back
+
+divide:
+	addi	$t6, $t6, 1
+	j continue6
+	
+#===============================================================
+	.data
+arrayNumber:	.asciiz "Size: "
+arrayEnter: .asciiz "Numbers:  "	
+	
+
+array: .space 400 # Allocate 80 bytes = space enough to hold 20 words
+
+menuPrompt:	.asciiz "\n'0'. Find the maximum number stored in the array and display that number.\n'1'. Find the number of times the maximum number appears in the array. \n'2'. Find how many numbers we have that we can divide the maximum number.\n'3' Quit."
+exit:	.asciiz "The program is over."
+endl:	.asciiz "\n"
+
